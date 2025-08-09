@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional
 
 from app.schemas import *
@@ -24,6 +25,7 @@ class Orchestrator:
 
         # middle agents
         for name, agent in self.mid_agents.items():
+            logging.info(f"Agent {name} has started!")
             stage = await agent.process(stage)
             results.append((name, stage))
         
@@ -32,12 +34,16 @@ class Orchestrator:
         for _, i in results:
             request.interviews += i.interviews
         
+        name = "final_agent"
+        logging.info(f"Agent {name} has started!")
         result = await self.final_agent.process(request)
-        results.append(("final_agent", result))
+        results.append((name, result))
 
         # new hypotheses
-        new_hypotheses = await self.hypotheses_generator.process(results[0])
-        results.append(("hypotheses_generation", new_hypotheses))
+        name = "hypotheses_generation"
+        logging.info(f"Agent {name} has started!")
+        new_hypotheses = await self.hypotheses_generator.process(results[0][1])
+        results.append((name, new_hypotheses))
 
         # save to json
         for n, result in results:

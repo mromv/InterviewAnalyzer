@@ -1,4 +1,6 @@
 import asyncio
+
+import app.logger
 from app.services import Orchestrator
 
 async def run():

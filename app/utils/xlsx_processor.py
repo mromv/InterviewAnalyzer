@@ -4,6 +4,7 @@ from typing import List, Dict
 
 from app.schemas import *
 from .get_info import get_hypotheses, read_interviews
+from .util import save_model_to_json
 
 # расшифрока наименований гипотез
 HYPOTHESES = get_hypotheses()
@@ -106,4 +107,6 @@ def parse_interviews(meta_file_path: str = "data/input_meta.txt") -> InterviewsC
         parse_interview_to_dict(filepath, company, industry)
         for filepath, company, industry in read_interviews(meta_file_path)
     ]
-    return parse_interviews_from_dicts(interviews)
+    struct_interviews = parse_interviews_from_dicts(interviews)
+    save_model_to_json(struct_interviews, "outputs/source_interviews.json", exclude_questions=False)
+    return struct_interviews
